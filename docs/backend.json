@@ -1,0 +1,224 @@
+{
+  "entities": {
+    "UserProfile": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "UserProfile",
+      "type": "object",
+      "description": "Represents a user's profile and preferences within the SecureFit application.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the user profile."
+        },
+        "userId": {
+          "type": "string",
+          "description": "User ID from Firebase Authentication."
+        },
+        "email": {
+          "type": "string",
+          "description": "User's email address.",
+          "format": "email"
+        },
+        "firstName": {
+          "type": "string",
+          "description": "User's first name."
+        },
+        "lastName": {
+          "type": "string",
+          "description": "User's last name."
+        },
+        "dateOfBirth": {
+          "type": "string",
+          "description": "User's date of birth.",
+          "format": "date-time"
+        },
+        "gender": {
+          "type": "string",
+          "description": "User's gender."
+        },
+        "height": {
+          "type": "number",
+          "description": "User's height in centimeters."
+        },
+        "weight": {
+          "type": "number",
+          "description": "User's weight in kilograms."
+        },
+        "fitnessGoals": {
+          "type": "string",
+          "description": "User's fitness goals."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "email",
+        "firstName",
+        "lastName"
+      ]
+    },
+    "WorkoutSession": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "WorkoutSession",
+      "type": "object",
+      "description": "Represents a workout session logged by a user.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the workout session."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to UserProfile. (Relationship: UserProfile 1:N WorkoutSession)"
+        },
+        "startTime": {
+          "type": "string",
+          "description": "Start time of the workout session.",
+          "format": "date-time"
+        },
+        "endTime": {
+          "type": "string",
+          "description": "End time of the workout session.",
+          "format": "date-time"
+        },
+        "activityType": {
+          "type": "string",
+          "description": "Type of workout activity (e.g., running, swimming, weightlifting)."
+        },
+        "duration": {
+          "type": "number",
+          "description": "Duration of the workout session in minutes."
+        },
+        "caloriesBurned": {
+          "type": "number",
+          "description": "Estimated calories burned during the workout session."
+        },
+        "distance": {
+          "type": "number",
+          "description": "Distance covered during the workout session (if applicable)."
+        },
+        "notes": {
+          "type": "string",
+          "description": "Optional notes about the workout session."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "startTime",
+        "endTime",
+        "activityType",
+        "duration",
+        "caloriesBurned"
+      ]
+    },
+    "FitnessMetric": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "FitnessMetric",
+      "type": "object",
+      "description": "Represents a specific fitness metric recorded for a user at a particular time.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the fitness metric record."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to UserProfile. (Relationship: UserProfile 1:N FitnessMetric)"
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "Timestamp when the metric was recorded.",
+          "format": "date-time"
+        },
+        "metricType": {
+          "type": "string",
+          "description": "Type of fitness metric (e.g., heart rate, steps, sleep duration)."
+        },
+        "metricValue": {
+          "type": "number",
+          "description": "Value of the fitness metric."
+        },
+        "unit": {
+          "type": "string",
+          "description": "Unit of measurement for the metric (e.g., bpm, steps, hours)."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "timestamp",
+        "metricType",
+        "metricValue",
+        "unit"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}/userProfile",
+        "definition": {
+          "entityName": "UserProfile",
+          "schema": {
+            "$ref": "#/backend/entities/UserProfile"
+          },
+          "description": "Stores user profile data. Access is restricted to the user identified by userId.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The Firebase Authentication UID of the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/workoutSessions/{workoutSessionId}",
+        "definition": {
+          "entityName": "WorkoutSession",
+          "schema": {
+            "$ref": "#/backend/entities/WorkoutSession"
+          },
+          "description": "Stores workout session logs for a specific user. Access is restricted to the user identified by userId.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The Firebase Authentication UID of the user."
+            },
+            {
+              "name": "workoutSessionId",
+              "description": "The unique identifier of the workout session."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/fitnessMetrics/{fitnessMetricId}",
+        "definition": {
+          "entityName": "FitnessMetric",
+          "schema": {
+            "$ref": "#/backend/entities/FitnessMetric"
+          },
+          "description": "Stores fitness metrics recorded for a specific user. Access is restricted to the user identified by userId.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The Firebase Authentication UID of the user."
+            },
+            {
+              "name": "fitnessMetricId",
+              "description": "The unique identifier for the fitness metric entry."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed to ensure data security, scalability, and ease of querying, aligning with the principles of Authorization Independence and Structural Segregation. User profiles, workout sessions, and fitness metrics are stored in separate collections, each with a clear ownership structure. Authorization independence is achieved by leveraging path-based ownership, eliminating the need for `get()` calls in security rules and simplifying atomic operations. The structure supports the QAPs by segregating user-specific data, allowing for secure `list` operations scoped to the authenticated user.\n\n*   `/users/{userId}/userProfile`: Stores user profile information. This collection is path-based, so only the authenticated user (identified by `userId`) can access their profile.\n*   `/users/{userId}/workoutSessions/{workoutSessionId}`: Stores workout sessions for each user. The workout sessions are nested under the user's document, enabling secure access based on the `userId`.\n*   `/users/{userId}/fitnessMetrics/{fitnessMetricId}`: Contains individual fitness metrics recorded for each user. These are stored under the user's document, allowing data access that is restricted to the authorized user."
+  }
+}

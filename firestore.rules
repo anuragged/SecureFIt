@@ -1,0 +1,99 @@
+/**
+ * @description This ruleset enforces a strict user-ownership model for the SecureFit application.
+ * All data is nested under /users/{userId}, ensuring that only the authenticated user can access their own profile, workout sessions, and fitness metrics.
+ * @data_structure
+ *   /users/{userId}/userProfile: Stores user profile data.
+ *   /users/{userId}/workoutSessions/{workoutSessionId}: Stores workout sessions for each user.
+ *   /users/{userId}/fitnessMetrics/{fitnessMetricId}: Stores individual fitness metrics recorded for each user.
+ * @key_security_decisions
+ *   - User listing is implicitly disallowed by the path-based structure.
+ *   - All write operations are restricted to the authenticated user, verified via the `userId` in the path.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * @description Manages access to user profile data.
+     * @path /users/{userId}/userProfile
+     * @allow (create) User A (auth.uid = "userA") can create their own profile under /users/userA/userProfile if the userId field matches.
+     * @allow (get) User A (auth.uid = "userA") can read their own profile under /users/userA/userProfile.
+     * @deny (create) User B (auth.uid = "userB") cannot create a profile under /users/userA/userProfile.
+     * @deny (get) User B (auth.uid = "userB") cannot read User A's profile under /users/userA/userProfile.
+     * @principle Enforces document ownership; only the authenticated user can create, read, update, or delete their own profile.
+     */
+    match /users/{userId}/userProfile {
+      // Helper function to check if the request is made by the owner.
+      function isOwner(userId) {
+        return request.auth != null && request.auth.uid == userId;
+      }
+      
+      // Helper function to check if the request is made by the owner and document exists.
+      function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+
+      allow get: if isOwner(userId);
+      allow list: if false; // User profiles are not listable.
+      allow create: if isOwner(userId) && request.resource.data.userId == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Manages access to workout session logs for a specific user.
+     * @path /users/{userId}/workoutSessions/{workoutSessionId}
+     * @allow (create) User A (auth.uid = "userA") can create a workout session under /users/userA/workoutSessions/{workoutSessionId}.
+     * @allow (get) User A (auth.uid = "userA") can read their own workout session under /users/userA/workoutSessions/{workoutSessionId}.
+     * @allow (list) User A (auth.uid = "userA") can list workout sessions under /users/userA/workoutSessions.
+     * @deny (create) User B (auth.uid = "userB") cannot create a workout session under /users/userA/workoutSessions/{workoutSessionId}.
+     * @deny (get) User B (auth.uid = "userB") cannot read User A's workout session under /users/userA/workoutSessions/{workoutSessionId}.
+     * @principle Enforces document ownership; only the authenticated user can create, read, update, or delete their own workout sessions.
+     */
+    match /users/{userId}/workoutSessions/{workoutSessionId} {
+      // Helper function to check if the request is made by the owner.
+      function isOwner(userId) {
+        return request.auth != null && request.auth.uid == userId;
+      }
+      
+      // Helper function to check if the request is made by the owner and document exists.
+      function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.userId == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Manages access to fitness metrics recorded for a specific user.
+     * @path /users/{userId}/fitnessMetrics/{fitnessMetricId}
+     * @allow (create) User A (auth.uid = "userA") can create a fitness metric under /users/userA/fitnessMetrics/{fitnessMetricId}.
+     * @allow (get) User A (auth.uid = "userA") can read their own fitness metric under /users/userA/fitnessMetrics/{fitnessMetricId}.
+     * @allow (list) User A (auth.uid = "userA") can list fitness metrics under /users/userA/fitnessMetrics.
+     * @deny (create) User B (auth.uid = "userB") cannot create a fitness metric under /users/userA/fitnessMetrics/{fitnessMetricId}.
+     * @deny (get) User B (auth.uid = "userB") cannot read User A's fitness metric under /users/userA/fitnessMetrics/{fitnessMetricId}.
+     * @principle Enforces document ownership; only the authenticated user can create, read, update, or delete their own fitness metrics.
+     */
+    match /users/{userId}/fitnessMetrics/{fitnessMetricId} {
+      // Helper function to check if the request is made by the owner.
+      function isOwner(userId) {
+        return request.auth != null && request.auth.uid == userId;
+      }
+      
+      // Helper function to check if the request is made by the owner and document exists.
+      function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.userId == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
+      allow delete: if isExistingOwner(userId);
+    }
+  }
+}
