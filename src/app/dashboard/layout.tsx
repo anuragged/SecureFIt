@@ -30,18 +30,19 @@ import {
   SheetContent,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { useUser } from "@/firebase";
 
 function AuthGuard({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useAuth();
+  const { user, isUserLoading } = useUser();
   const router = useRouter();
 
   useEffect(() => {
-    if (!loading && !user) {
+    if (!isUserLoading && !user) {
       router.replace("/login");
     }
-  }, [user, loading, router]);
+  }, [user, isUserLoading, router]);
 
-  if (loading || !user) {
+  if (isUserLoading || !user) {
     return (
       <div className="flex h-screen w-full items-center justify-center bg-background">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
@@ -128,8 +129,16 @@ export default function DashboardLayout({
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="rounded-full">
-                  {userAvatar && (
-                    <Image
+                  {userAvatar && user?.photoURL ? (
+                     <Image
+                      src={user.photoURL}
+                      width={36}
+                      height={36}
+                      alt="User avatar"
+                      className="rounded-full"
+                    />
+                  ) : userAvatar ? (
+                     <Image
                       src={userAvatar.imageUrl}
                       width={36}
                       height={36}
@@ -137,12 +146,14 @@ export default function DashboardLayout({
                       className="rounded-full"
                       data-ai-hint={userAvatar.imageHint}
                     />
+                  ) : (
+                    <User className="h-5 w-5" />
                   )}
                   <span className="sr-only">Toggle user menu</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuLabel>{user?.name}</DropdownMenuLabel>
+                <DropdownMenuLabel>{user?.displayName || user?.email}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>Profile</DropdownMenuItem>
                 <DropdownMenuItem>Settings</DropdownMenuItem>

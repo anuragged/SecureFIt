@@ -40,15 +40,12 @@ export function RegisterForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       await register(values.name, values.email, values.password);
-      toast({
-        title: "Registration Successful",
-        description: "Your account has been created.",
-      });
-    } catch (error) {
+      // Success is handled by the router in the auth provider
+    } catch (error: any) {
       toast({
         variant: "destructive",
         title: "Registration Failed",
-        description: "An error occurred. Please try again.",
+        description: error.message || "An error occurred. Please try again.",
       });
     }
   }

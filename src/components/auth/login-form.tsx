@@ -38,15 +38,12 @@ export function LoginForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       await login(values.email, values.password);
-      toast({
-        title: "Login Successful",
-        description: "Welcome back!",
-      });
-    } catch (error) {
+      // Success is handled by the router in the auth provider
+    } catch (error: any) {
       toast({
         variant: "destructive",
         title: "Login Failed",
-        description: "Please check your credentials and try again.",
+        description: error.message || "Please check your credentials and try again.",
       });
     }
   }
