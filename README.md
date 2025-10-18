@@ -1,4 +1,5 @@
 # SecureFit: AI-Powered Fitness Companion
+<img width="1680" height="1050" alt="Screenshot 2025-10-18 at 10 44 44 PM" src="https://github.com/user-attachments/assets/957186b4-e537-4587-b8a5-cf962edf65c7" />
 
 SecureFit is a modern, full-stack web application designed to be a personal fitness companion. Track your fitness metrics, get AI-powered diet recommendations, and manage your personal profile all in one place.
 
@@ -81,8 +82,3 @@ SecureFit leverages AI to provide personalized diet recommendations. Users recei
 ## Live Demo
 
 [Coming soon]
-
-
-
-If you want, I can also make a **version with badges for Node.js, TypeScript, Next.js, and Tailwind CSS** so it looks extra polished on GitHub. Do you want me to do that?
-```
