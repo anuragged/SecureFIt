@@ -70,7 +70,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const [firstName, ...lastNameParts] = name.split(' ');
         const lastName = lastNameParts.join(' ');
 
-        const userProfileData: Omit<UserProfile, 'id'> = {
+        const userProfileData: UserProfile = {
+          id: firebaseUser.uid,
           userId: firebaseUser.uid,
           email: firebaseUser.email!,
           firstName: firstName || '',
