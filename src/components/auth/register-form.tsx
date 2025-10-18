@@ -17,11 +17,24 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
   email: z.string().email({ message: "Invalid email address." }),
   password: z.string().min(6, { message: "Password must be at least 6 characters." }),
+  dateOfBirth: z.string().refine((val) => !isNaN(Date.parse(val)), { message: "Invalid date."}),
+  gender: z.enum(["male", "female", "other"]),
+  height: z.string().refine(val => !isNaN(parseFloat(val)) && parseFloat(val) > 0, { message: "Please enter a valid height."}),
+  weight: z.string().refine(val => !isNaN(parseFloat(val)) && parseFloat(val) > 0, { message: "Please enter a valid weight."}),
+  fitnessGoals: z.string().min(10, { message: "Please describe your goals in at least 10 characters." }),
 });
 
 export function RegisterForm() {
@@ -34,12 +47,28 @@ export function RegisterForm() {
       name: "",
       email: "",
       password: "",
+      dateOfBirth: "",
+      gender: undefined,
+      height: "",
+      weight: "",
+      fitnessGoals: "",
     },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      await register(values.name, values.email, values.password);
+      await register(
+        values.name, 
+        values.email, 
+        values.password,
+        {
+          dateOfBirth: values.dateOfBirth,
+          gender: values.gender,
+          height: parseFloat(values.height),
+          weight: parseFloat(values.weight),
+          fitnessGoals: values.fitnessGoals,
+        }
+      );
       // Success is handled by the router in the auth provider
     } catch (error: any) {
       toast({
@@ -87,6 +116,86 @@ export function RegisterForm() {
               <FormLabel>Password</FormLabel>
               <FormControl>
                 <Input type="password" placeholder="••••••••" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="dateOfBirth"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Date of Birth</FormLabel>
+              <FormControl>
+                <Input type="date" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="gender"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Gender</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select your gender" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="male">Male</SelectItem>
+                  <SelectItem value="female">Female</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <div className="grid grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="height"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Height (cm)</FormLabel>
+                <FormControl>
+                  <Input type="number" placeholder="180" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="weight"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Weight (kg)</FormLabel>
+                <FormControl>
+                  <Input type="number" placeholder="75" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        <FormField
+          control={form.control}
+          name="fitnessGoals"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Fitness Goals</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="e.g., Lose 10kg, build muscle, run a marathon..."
+                  className="resize-none"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

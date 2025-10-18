@@ -10,15 +10,16 @@ import {
   updateProfile,
   type User
 } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc } from 'firebase/firestore';
 import { useUser, useFirestore } from '@/firebase';
 import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
+import type { UserProfile } from '@/lib/types';
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
   login: (email: string, pass: string) => Promise<void>;
-  register: (name: string, email: string, pass: string) => Promise<void>;
+  register: (name: string, email: string, pass: string, profileData: Partial<UserProfile>) => Promise<void>;
   logout: () => void;
 }
 
@@ -41,7 +42,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const register = async (name: string, email: string, pass: string): Promise<void> => {
+  const register = async (name: string, email: string, pass: string, profileData: Partial<UserProfile>): Promise<void> => {
     setLoading(true);
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
@@ -57,6 +58,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           email: firebaseUser.email,
           firstName: name.split(' ')[0] || '',
           lastName: name.split(' ')[1] || '',
+          ...profileData
         };
         setDocumentNonBlocking(userProfileRef, userProfileData, { merge: true });
       }

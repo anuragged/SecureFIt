@@ -23,6 +23,7 @@ import {
   Loader2,
   Bell,
   Menu,
+  Utensils,
 } from "lucide-react";
 import Link from "next/link";
 import {
@@ -63,6 +64,7 @@ export default function DashboardLayout({
 
   const navItems = [
     { href: "/dashboard", icon: Home, label: "Dashboard" },
+    { href: "/dashboard/diet-plan", icon: Utensils, label: "Diet Plan" },
     { href: "#", icon: User, label: "Profile" },
     { href: "#", icon: Settings, label: "Settings" },
   ];
