@@ -8,9 +8,15 @@
 import { ai } from '@/ai/genkit';
 import { DietPlanInputSchema, DietPlanOutputSchema, type DietPlanInput, type DietPlanOutput } from '@/lib/types';
 
+// New input schema for the prompt, including the calculated age.
+const DietPromptInputSchema = DietPlanInputSchema.extend({
+  age: z.union([z.number(), z.string()]).describe("The user's calculated age."),
+});
+
+
 const dietPrompt = ai.definePrompt({
   name: 'dietPrompt',
-  input: { schema: DietPlanInputSchema },
+  input: { schema: DietPromptInputSchema },
   output: { schema: DietPlanOutputSchema },
   prompt: `You are an expert nutritionist. Based on the following user profile, create a balanced and healthy 1-day diet plan.
 

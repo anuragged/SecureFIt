@@ -39,7 +39,13 @@ export interface FitnessMetric {
 // AI Diet Plan Types
 
 export const DietPlanInputSchema = z.object({
-  userProfile: UserProfileSchema.and(z.object({id: z.string()}))
+  userProfile: z.object({
+    dateOfBirth: z.string().optional(),
+    gender: z.string().optional(),
+    height: z.number().optional(),
+    weight: z.number().optional(),
+    fitnessGoals: z.string().optional(),
+  }),
 });
 
 export type DietPlanInput = z.infer<typeof DietPlanInputSchema>;

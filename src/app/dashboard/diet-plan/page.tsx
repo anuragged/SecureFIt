@@ -87,13 +87,6 @@ export default function DietPlanPage() {
         </div>
       )}
 
-      {!userProfile && !isProfileLoading && !isLoading && (
-         <Alert variant="destructive">
-           <AlertTitle>Profile not found</AlertTitle>
-           <AlertDescription>We couldn't find your profile data. Please make sure you have completed your profile during registration. If you have, there might be a permissions issue preventing us from loading your data.</AlertDescription>
-         </Alert>
-      )}
-
       {!dietPlan && !isLoading && userProfile && (
         <Card className="text-center">
           <CardHeader>
