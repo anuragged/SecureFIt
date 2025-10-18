@@ -1,7 +1,5 @@
 # SecureFit: AI-Powered Fitness Companion
 
-![SecureFit App Screenshot](https://storage.googleapis.com/stedi-assets/secure-fit-screenshot.png)
-
 SecureFit is a modern, full-stack web application designed to be a personal fitness companion. Track your fitness metrics, get AI-powered diet recommendations, and manage your personal profile all in one place.
 
 ---
