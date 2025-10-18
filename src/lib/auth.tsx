@@ -70,14 +70,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const [firstName, ...lastNameParts] = name.split(' ');
         const lastName = lastNameParts.join(' ');
 
-        const userProfileData: UserProfile = {
-          id: firebaseUser.uid,
+        const userProfileData: Omit<UserProfile, 'id'> = {
           userId: firebaseUser.uid,
           email: firebaseUser.email!,
           firstName: firstName || '',
           lastName: lastName || '',
-          ...profileData,
+          dateOfBirth: profileData.dateOfBirth,
+          gender: profileData.gender,
+          height: profileData.height,
+          weight: profileData.weight,
+          fitnessGoals: profileData.fitnessGoals,
         };
+        
         setDocumentNonBlocking(userProfileRef, userProfileData, { merge: true });
       }
 

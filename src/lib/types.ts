@@ -12,18 +12,20 @@ export interface WorkoutSession {
   notes?: string;
 }
 
-export interface UserProfile {
-  id: string;
-  userId: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  dateOfBirth?: string;
-  gender?: string;
-  height?: number; // in cm
-  weight?: number; // in kg
-  fitnessGoals?: string;
-}
+export const UserProfileSchema = z.object({
+  userId: z.string(),
+  email: z.string().email(),
+  firstName: z.string(),
+  lastName: z.string(),
+  dateOfBirth: z.string().optional(),
+  gender: z.string().optional(),
+  height: z.number().optional(), // in cm
+  weight: z.number().optional(), // in kg
+  fitnessGoals: z.string().optional(),
+});
+
+
+export type UserProfile = z.infer<typeof UserProfileSchema> & { id: string };
 
 export interface FitnessMetric {
   id: string;
@@ -37,7 +39,7 @@ export interface FitnessMetric {
 // AI Diet Plan Types
 
 export const DietPlanInputSchema = z.object({
-  userProfile: z.custom<UserProfile>()
+  userProfile: UserProfileSchema.and(z.object({id: z.string()}))
 });
 
 export type DietPlanInput = z.infer<typeof DietPlanInputSchema>;
