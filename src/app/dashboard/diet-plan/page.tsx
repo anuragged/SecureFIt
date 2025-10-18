@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useDoc, useFirestore, useUser, useMemoFirebase } from '@/firebase';
 import { doc } from 'firebase/firestore';
-import type { UserProfile, DietPlanOutput } from '@/lib/types';
+import type { UserProfile, DietPlanOutput, DietPlanInput } from '@/lib/types';
 import { suggestDietPlan } from '@/ai/flows/suggest-diet-plan';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -81,10 +81,14 @@ export default function DietPlanPage() {
          </Alert>
       )}
 
-      {isProfileLoading && !dietPlan && (
-        <div className="flex justify-center">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        </div>
+      {!userProfile && !isProfileLoading && (
+        <Alert variant="destructive">
+          <AlertTitle>Profile Not Found</AlertTitle>
+          <AlertDescription>
+            We couldn't find your profile data. Please make sure you have completed your profile during registration.
+            If you have, there might be a permissions issue preventing us from loading your data.
+          </AlertDescription>
+        </Alert>
       )}
 
       {!dietPlan && !isLoading && userProfile && (
