@@ -33,7 +33,14 @@ export default function DietPlanPage() {
     setIsLoading(true);
     setError(null);
     try {
-      const plan = await suggestDietPlan({ userProfile });
+        const input: DietPlanInput = {
+          gender: userProfile.gender,
+          height: userProfile.height,
+          weight: userProfile.weight,
+          fitnessGoals: userProfile.fitnessGoals,
+          dateOfBirth: userProfile.dateOfBirth,
+        };
+      const plan = await suggestDietPlan(input);
       setDietPlan(plan);
     } catch (e: any) {
       console.error(e);
@@ -79,16 +86,6 @@ export default function DietPlanPage() {
            <AlertTitle>Error</AlertTitle>
            <AlertDescription>{error}</AlertDescription>
          </Alert>
-      )}
-
-      {!userProfile && !isProfileLoading && (
-        <Alert variant="destructive">
-          <AlertTitle>Profile Not Found</AlertTitle>
-          <AlertDescription>
-            We couldn't find your profile data. Please make sure you have completed your profile during registration.
-            If you have, there might be a permissions issue preventing us from loading your data.
-          </AlertDescription>
-        </Alert>
       )}
 
       {!dietPlan && !isLoading && userProfile && (

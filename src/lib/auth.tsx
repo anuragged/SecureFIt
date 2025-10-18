@@ -67,15 +67,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (firestore) {
         const userProfileRef = doc(firestore, 'users', firebaseUser.uid);
         
-        const [firstName, ...lastNameParts] = name.split(' ');
-        const lastName = lastNameParts.join(' ');
+        const nameParts = name.split(' ').filter(part => part);
+        const firstName = nameParts[0] || '';
+        const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : ' '; // Use a space if no last name
 
         const userProfileData: UserProfile = {
           id: firebaseUser.uid,
           userId: firebaseUser.uid,
           email: firebaseUser.email!,
-          firstName: firstName || '',
-          lastName: lastName || '',
+          firstName: firstName,
+          lastName: lastName,
           dateOfBirth: profileData.dateOfBirth,
           gender: profileData.gender,
           height: profileData.height,
