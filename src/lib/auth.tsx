@@ -23,7 +23,7 @@ interface AuthContextType {
     name: string,
     email: string,
     pass: string,
-    profileData: Partial<Omit<UserProfile, 'id' | 'userId' | 'email' | 'firstName' | 'lastName'>>
+    profileData: Partial<Omit<UserProfile, 'id' | 'userId' | 'email' | 'firstName' | 'lastName'>> & { height: string, weight: string }
   ) => Promise<void>;
   logout: () => void;
 }
@@ -51,7 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     name: string,
     email: string,
     pass: string,
-    profileData: Partial<Omit<UserProfile, 'id' | 'userId' | 'email' | 'firstName' | 'lastName'>>
+    profileData: Partial<Omit<UserProfile, 'id' | 'userId' | 'email' | 'firstName' | 'lastName'>> & { height: string, weight: string }
   ): Promise<void> => {
     setLoading(true);
     try {
@@ -69,7 +69,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         
         const nameParts = name.split(' ').filter(part => part);
         const firstName = nameParts[0] || '';
-        const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : ' '; // Use a space if no last name
+        const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : ' ';
+
 
         const userProfileData: UserProfile = {
           id: firebaseUser.uid,
@@ -79,8 +80,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           lastName: lastName,
           dateOfBirth: profileData.dateOfBirth,
           gender: profileData.gender,
-          height: profileData.height,
-          weight: profileData.weight,
+          height: parseFloat(profileData.height) || 0,
+          weight: parseFloat(profileData.weight) || 0,
           fitnessGoals: profileData.fitnessGoals,
         };
         

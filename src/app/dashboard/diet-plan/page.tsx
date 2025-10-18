@@ -88,13 +88,13 @@ export default function DietPlanPage() {
          </Alert>
       )}
 
-      {!dietPlan && !isLoading && userProfile && (
+      {!dietPlan && !isLoading && !isProfileLoading && !userProfile && (
         <Card className="text-center">
           <CardHeader>
             <CardTitle>Ready for your diet plan?</CardTitle>
-            <CardDescription>Click the button to get a personalized diet plan.</CardDescription>
+            <CardDescription>Click the button to get a personalized diet plan once your profile loads.</CardDescription>
           </CardHeader>
-          <CardContent>
+           <CardContent>
              <Utensils className="mx-auto h-12 w-12 text-muted-foreground" />
           </CardContent>
         </Card>
