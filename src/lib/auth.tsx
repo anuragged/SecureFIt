@@ -67,7 +67,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (firestore) {
         const userProfileRef = doc(
           firestore,
-          `users/${firebaseUser.uid}/userProfile`,
+          `users`,
           firebaseUser.uid
         );
         const userProfileData = {
