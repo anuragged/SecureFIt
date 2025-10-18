@@ -2,13 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import { useDoc, useFirestore, useUser, useMemoFirebase } from '@/firebase';
-import { doc } from 'firebase/firestore';
+import { doc, collection } from 'firebase/firestore';
 import type { UserProfile, DietPlanOutput } from '@/lib/types';
 import { suggestDietPlan } from '@/ai/flows/suggest-diet-plan';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2, Utensils } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { useCollection } from '@/firebase/firestore/use-collection';
 
 export default function DietPlanPage() {
   const { user } = useUser();
@@ -17,12 +18,14 @@ export default function DietPlanPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const userProfileRef = useMemoFirebase(() => {
+  const userProfileCollectionRef = useMemoFirebase(() => {
     if (!user || !firestore) return null;
-    return doc(firestore, `users/${user.uid}/userProfile`, 'profile');
+    return collection(firestore, `users/${user.uid}/userProfile`);
   }, [user, firestore]);
 
-  const { data: userProfile, isLoading: isProfileLoading } = useDoc<UserProfile>(userProfileRef);
+  const { data: userProfiles, isLoading: isProfileLoading } = useCollection<UserProfile>(userProfileCollectionRef);
+
+  const userProfile = userProfiles?.[0];
 
   const generatePlan = async () => {
     if (!userProfile) {

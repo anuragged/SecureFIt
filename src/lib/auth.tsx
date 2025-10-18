@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
-import { 
-  getAuth, 
-  createUserWithEmailAndPassword, 
-  signInWithEmailAndPassword, 
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
   signOut,
   updateProfile,
-  type User
+  type User,
 } from 'firebase/auth';
 import { doc } from 'firebase/firestore';
 import { useUser, useFirestore } from '@/firebase';
@@ -19,7 +19,12 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   login: (email: string, pass: string) => Promise<void>;
-  register: (name: string, email: string, pass: string, profileData: Partial<UserProfile>) => Promise<void>;
+  register: (
+    name: string,
+    email: string,
+    pass: string,
+    profileData: Partial<UserProfile>
+  ) => Promise<void>;
   logout: () => void;
 }
 
@@ -42,27 +47,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const register = async (name: string, email: string, pass: string, profileData: Partial<UserProfile>): Promise<void> => {
+  const register = async (
+    name: string,
+    email: string,
+    pass: string,
+    profileData: Partial<UserProfile>
+  ): Promise<void> => {
     setLoading(true);
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        pass
+      );
       const firebaseUser = userCredential.user;
-      
+
       await updateProfile(firebaseUser, { displayName: name });
 
       if (firestore) {
-        const userProfileRef = doc(firestore, `users/${firebaseUser.uid}/userProfile`, 'profile');
+        const userProfileRef = doc(
+          firestore,
+          `users/${firebaseUser.uid}/userProfile`,
+          firebaseUser.uid
+        );
         const userProfileData = {
           id: firebaseUser.uid,
           userId: firebaseUser.uid,
           email: firebaseUser.email,
           firstName: name.split(' ')[0] || '',
           lastName: name.split(' ')[1] || '',
-          ...profileData
+          ...profileData,
         };
         setDocumentNonBlocking(userProfileRef, userProfileData, { merge: true });
       }
-      
+
       router.push('/dashboard');
     } finally {
       setLoading(false);
@@ -80,7 +98,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading: isUserLoading || loading, login, register, logout }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        loading: isUserLoading || loading,
+        login,
+        register,
+        logout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
