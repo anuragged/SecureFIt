@@ -3,31 +3,11 @@
  * @fileOverview A flow for generating a diet plan based on user profile.
  *
  * - suggestDietPlan - A function that generates a diet plan.
- * - DietPlanInput - The input type for the suggestDietPlan function.
- * - DietPlanOutput - The return type for the suggestDietPlan function.
  */
 
 import { ai } from '@/ai/genkit';
-import { z } from 'genkit';
-import { UserProfile } from '@/lib/types';
+import { DietPlanInputSchema, DietPlanOutputSchema, type DietPlanInput, type DietPlanOutput } from '@/lib/types';
 
-export const DietPlanInputSchema = z.object({
-  userProfile: z.custom<UserProfile>()
-});
-
-export type DietPlanInput = z.infer<typeof DietPlanInputSchema>;
-
-export const DietPlanOutputSchema = z.object({
-  dietPlan: z.object({
-    breakfast: z.array(z.string()).describe("List of breakfast options."),
-    lunch: z.array(z.string()).describe("List of lunch options."),
-    dinner: z.array(z.string()).describe("List of dinner options."),
-    snacks: z.array(z.string()).describe("List of snack options."),
-  }),
-  summary: z.string().describe("A brief summary of the diet plan and why it's suitable for the user.")
-});
-
-export type DietPlanOutput = z.infer<typeof DietPlanOutputSchema>;
 
 const dietPrompt = ai.definePrompt({
   name: 'dietPrompt',

@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 export interface WorkoutSession {
   id: string;
   userId: string;
@@ -31,3 +33,23 @@ export interface FitnessMetric {
   metricValue: number;
   unit: string;
 }
+
+// AI Diet Plan Types
+
+export const DietPlanInputSchema = z.object({
+  userProfile: z.custom<UserProfile>()
+});
+
+export type DietPlanInput = z.infer<typeof DietPlanInputSchema>;
+
+export const DietPlanOutputSchema = z.object({
+  dietPlan: z.object({
+    breakfast: z.array(z.string()).describe("List of breakfast options."),
+    lunch: z.array(z.string()).describe("List of lunch options."),
+    dinner: z.array(z.string()).describe("List of dinner options."),
+    snacks: z.array(z.string()).describe("List of snack options."),
+  }),
+  summary: z.string().describe("A brief summary of the diet plan and why it's suitable for the user.")
+});
+
+export type DietPlanOutput = z.infer<typeof DietPlanOutputSchema>;

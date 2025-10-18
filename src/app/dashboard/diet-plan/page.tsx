@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useDoc, useFirestore, useUser, useMemoFirebase } from '@/firebase';
 import { doc } from 'firebase/firestore';
-import type { UserProfile } from '@/lib/types';
-import { suggestDietPlan, type DietPlanOutput } from '@/ai/flows/suggest-diet-plan';
+import type { UserProfile, DietPlanOutput } from '@/lib/types';
+import { suggestDietPlan } from '@/ai/flows/suggest-diet-plan';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2, Utensils } from 'lucide-react';
