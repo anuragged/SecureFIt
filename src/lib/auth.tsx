@@ -23,7 +23,7 @@ interface AuthContextType {
     name: string,
     email: string,
     pass: string,
-    profileData: Partial<Omit<UserProfile, 'id' | 'userId' | 'email' | 'firstName' | 'lastName'>> & { height: string, weight: string }
+    profileData: Partial<Omit<UserProfile, 'id' | 'userId' | 'email' | 'firstName' | 'lastName'>>
   ) => Promise<void>;
   logout: () => void;
 }
@@ -51,7 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     name: string,
     email: string,
     pass: string,
-    profileData: Partial<Omit<UserProfile, 'id' | 'userId' | 'email' | 'firstName' | 'lastName'>> & { height: string, weight: string }
+    profileData: Partial<Omit<UserProfile, 'id' | 'userId' | 'email' | 'firstName' | 'lastName'>>
   ): Promise<void> => {
     setLoading(true);
     try {
@@ -80,8 +80,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           lastName: lastName,
           dateOfBirth: profileData.dateOfBirth,
           gender: profileData.gender,
-          height: parseFloat(profileData.height) || 0,
-          weight: parseFloat(profileData.weight) || 0,
+          height: profileData.height,
+          weight: profileData.weight,
           fitnessGoals: profileData.fitnessGoals,
         };
         

@@ -32,8 +32,8 @@ const formSchema = z.object({
   password: z.string().min(6, { message: "Password must be at least 6 characters." }),
   dateOfBirth: z.string().refine((val) => !isNaN(Date.parse(val)), { message: "Invalid date."}),
   gender: z.enum(["male", "female", "other"]),
-  height: z.string().refine(val => !isNaN(parseFloat(val)) && parseFloat(val) > 0, { message: "Please enter a valid height."}),
-  weight: z.string().refine(val => !isNaN(parseFloat(val)) && parseFloat(val) > 0, { message: "Please enter a valid weight."}),
+  height: z.coerce.number().positive({ message: "Please enter a valid height."}),
+  weight: z.coerce.number().positive({ message: "Please enter a valid weight."}),
   fitnessGoals: z.string().min(10, { message: "Please describe your goals in at least 10 characters." }),
 });
 
@@ -49,8 +49,8 @@ export function RegisterForm() {
       password: "",
       dateOfBirth: "",
       gender: undefined,
-      height: "",
-      weight: "",
+      height: undefined,
+      weight: undefined,
       fitnessGoals: "",
     },
   });
@@ -64,8 +64,8 @@ export function RegisterForm() {
         {
           dateOfBirth: values.dateOfBirth,
           gender: values.gender,
-          height: parseFloat(values.height),
-          weight: parseFloat(values.weight),
+          height: values.height,
+          weight: values.weight,
           fitnessGoals: values.fitnessGoals,
         }
       );

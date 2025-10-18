@@ -34,11 +34,7 @@ export default function DietPlanPage() {
     setError(null);
     try {
         const input: DietPlanInput = {
-          gender: userProfile.gender,
-          height: userProfile.height,
-          weight: userProfile.weight,
-          fitnessGoals: userProfile.fitnessGoals,
-          dateOfBirth: userProfile.dateOfBirth,
+          userProfile: userProfile,
         };
       const plan = await suggestDietPlan(input);
       setDietPlan(plan);
@@ -88,18 +84,6 @@ export default function DietPlanPage() {
          </Alert>
       )}
 
-      {!dietPlan && !isLoading && !isProfileLoading && !userProfile && (
-        <Card className="text-center">
-          <CardHeader>
-            <CardTitle>Ready for your diet plan?</CardTitle>
-            <CardDescription>Click the button to get a personalized diet plan once your profile loads.</CardDescription>
-          </CardHeader>
-           <CardContent>
-             <Utensils className="mx-auto h-12 w-12 text-muted-foreground" />
-          </CardContent>
-        </Card>
-      )}
-
       {dietPlan && (
         <div className="space-y-6">
           <Card>
@@ -119,6 +103,18 @@ export default function DietPlanPage() {
           </div>
         </div>
       )}
+
+      {!dietPlan && !isLoading && !isProfileLoading && !userProfile && (
+         <Card className="text-center">
+           <CardHeader>
+             <CardTitle>Ready for your diet plan?</CardTitle>
+           </CardHeader>
+            <CardContent>
+              <p  className="text-muted-foreground mb-4">Click the button to get a personalized diet plan once your profile is loaded.</p>
+              <Utensils className="mx-auto h-12 w-12 text-muted-foreground" />
+           </CardContent>
+         </Card>
+       )}
     </div>
   );
 }
