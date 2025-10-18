@@ -7,6 +7,7 @@
 
 import { ai } from '@/ai/genkit';
 import { DietPlanInputSchema, DietPlanOutputSchema, type DietPlanInput, type DietPlanOutput } from '@/lib/types';
+import { z } from 'zod';
 
 // New input schema for the prompt, including the calculated age.
 const DietPromptInputSchema = DietPlanInputSchema.extend({
