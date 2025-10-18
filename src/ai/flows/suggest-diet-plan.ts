@@ -8,7 +8,6 @@
 import { ai } from '@/ai/genkit';
 import { DietPlanInputSchema, DietPlanOutputSchema, type DietPlanInput, type DietPlanOutput } from '@/lib/types';
 
-
 const dietPrompt = ai.definePrompt({
   name: 'dietPrompt',
   input: { schema: DietPlanInputSchema },
@@ -16,7 +15,7 @@ const dietPrompt = ai.definePrompt({
   prompt: `You are an expert nutritionist. Based on the following user profile, create a balanced and healthy 1-day diet plan.
 
 User Profile:
-- Age: {{calculateAge userProfile.dateOfBirth}}
+- Age: {{age}}
 - Gender: {{userProfile.gender}}
 - Height: {{userProfile.height}} cm
 - Weight: {{userProfile.weight}} kg
@@ -25,19 +24,6 @@ User Profile:
 Provide a variety of options for each meal. The diet should be tailored to the user's goals.
 Also provide a brief summary explaining your recommendations.
 `,
-  helpers: {
-    calculateAge: (dateOfBirth: string | undefined) => {
-      if (!dateOfBirth) return 'N/A';
-      const birthDate = new Date(dateOfBirth);
-      const today = new Date();
-      let age = today.getFullYear() - birthDate.getFullYear();
-      const m = today.getMonth() - birthDate.getMonth();
-      if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-        age--;
-      }
-      return age;
-    }
-  }
 });
 
 
@@ -48,7 +34,21 @@ const suggestDietPlanFlow = ai.defineFlow(
     outputSchema: DietPlanOutputSchema,
   },
   async (input) => {
-    const { output } = await dietPrompt(input);
+    const calculateAge = (dateOfBirth: string | undefined) => {
+      if (!dateOfBirth) return 'N/A';
+      const birthDate = new Date(dateOfBirth);
+      const today = new Date();
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const m = today.getMonth() - birthDate.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+      return age;
+    }
+    
+    const age = calculateAge(input.userProfile.dateOfBirth);
+    
+    const { output } = await dietPrompt({ ...input, age });
     return output!;
   }
 );

@@ -27,7 +27,7 @@ export default function DietPlanPage() {
 
   const generatePlan = async () => {
     if (!userProfile) {
-      setError("User profile is not available to generate a diet plan.");
+      setError("User profile is not available to generate a diet plan. Please ensure your profile is complete.");
       return;
     }
     setIsLoading(true);
@@ -59,7 +59,7 @@ export default function DietPlanPage() {
             An AI-powered diet suggestion based on your profile and goals.
           </p>
         </div>
-        <Button onClick={generatePlan} disabled={isLoading || !userProfile}>
+        <Button onClick={generatePlan} disabled={isLoading || isProfileLoading || !userProfile}>
           {isLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -81,7 +81,20 @@ export default function DietPlanPage() {
          </Alert>
       )}
 
-      {!dietPlan && !isLoading && (
+      {isProfileLoading && !dietPlan && (
+        <div className="flex justify-center">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      )}
+
+      {!userProfile && !isProfileLoading && !isLoading && (
+         <Alert variant="destructive">
+           <AlertTitle>Profile not found</AlertTitle>
+           <AlertDescription>We couldn't find your profile data. Please make sure you have completed your profile during registration. If you have, there might be a permissions issue preventing us from loading your data.</AlertDescription>
+         </Alert>
+      )}
+
+      {!dietPlan && !isLoading && userProfile && (
         <Card className="text-center">
           <CardHeader>
             <CardTitle>Ready for your diet plan?</CardTitle>
