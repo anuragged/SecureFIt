@@ -23,7 +23,7 @@ interface AuthContextType {
     name: string,
     email: string,
     pass: string,
-    profileData: Partial<UserProfile>
+    profileData: Partial<Omit<UserProfile, 'id' | 'userId' | 'email' | 'firstName' | 'lastName'>>
   ) => Promise<void>;
   logout: () => void;
 }
@@ -51,7 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     name: string,
     email: string,
     pass: string,
-    profileData: Partial<UserProfile>
+    profileData: Partial<Omit<UserProfile, 'id' | 'userId' | 'email' | 'firstName' | 'lastName'>>
   ): Promise<void> => {
     setLoading(true);
     try {
@@ -65,17 +65,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await updateProfile(firebaseUser, { displayName: name });
 
       if (firestore) {
-        const userProfileRef = doc(
-          firestore,
-          `users`,
-          firebaseUser.uid
-        );
-        const userProfileData = {
+        const userProfileRef = doc(firestore, 'users', firebaseUser.uid);
+        
+        const [firstName, ...lastNameParts] = name.split(' ');
+        const lastName = lastNameParts.join(' ');
+
+        const userProfileData: UserProfile = {
           id: firebaseUser.uid,
           userId: firebaseUser.uid,
-          email: firebaseUser.email,
-          firstName: name.split(' ')[0] || '',
-          lastName: name.split(' ')[1] || '',
+          email: firebaseUser.email!,
+          firstName: firstName || '',
+          lastName: lastName || '',
           ...profileData,
         };
         setDocumentNonBlocking(userProfileRef, userProfileData, { merge: true });
